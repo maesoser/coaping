@@ -1,10 +1,10 @@
 # coaping
 =======
 
-A ping for CoAP, the constrained Application Protocol **written in C**
+A ping for CoAP, the constrained Application Protocol **written in C**.
 
 ### First things first
-First of all, I want to say that there is a code with the same name written for ruby by [**cabo**](https://github.com/cabo) that does more or less the same as my code. But he did it before me. You can find it [**here**](https://github.com/cabo/coaping)
+First of all, I want to say that there is a code with the same name written for ruby by [**cabo**](https://github.com/cabo) that does more or less the same as my code does. But he did it before me. You can find it [**here**](https://github.com/cabo/coaping).
 
 ### Examples
 
