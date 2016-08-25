@@ -41,6 +41,8 @@ double max_time = 0;
 unsigned int nsuccess = 0;
 unsigned int nfail = 0;
 
+unsigned int stop = 0;
+
 void print_help();
 int ping(uint16_t id);
 void resolve();

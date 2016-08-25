@@ -1,9 +1,13 @@
 #include "coaping.h"
 
+void sig_hndlr(){
+    stop = 1;
+}
+
 int main(int argc, char* argv[])
 {
     srand(time(NULL));
-    signal(SIGINT, show_resume);
+    signal(SIGINT, sig_hndlr);
     int opt;
     
     if(argc==1) print_help();
@@ -32,6 +36,7 @@ int main(int argc, char* argv[])
     if(ntimes==0){
 	while(1){
 	    ping(startid);
+	    if(stop==1) show_resume();
 	    if(startid==0xFFFF) startid = 0;
 	    startid++;	    
 	}
@@ -39,6 +44,7 @@ int main(int argc, char* argv[])
 	int n = 0;
 	for(n=0; n!=ntimes; n++){
 	   ping(startid);
+	   if(stop==1) show_resume();
 	   startid++; 
 	}
     }
@@ -53,7 +59,10 @@ void show_resume(){
      printf("\n--- %s ping statistics ---\n",inet_ntoa(server_ip));
      unsigned int total = nfail+nsuccess;
      double percentage = ((double)nfail/(double)total)*100.0;
-     printf("%d packets transmitted, %d received, %d errors, %.2lf%% packet loss\n",total,nsuccess,nfail,percentage);
+     
+     //printf("%d packets transmitted, %d received, %d errors, %.2lf%% packet loss\n",total,nsuccess,nfail,percentage);
+     printf("%d packets transmitted, %d received, %.2lf%% packet loss\n",total,nsuccess,percentage);
+     
      // rtt min/avg/max/mdev = 38.218/38.218/38.218/0.000 ms
     printf("rtt min/avg/max = %.3lf/%.3lf/%.3lf ms\n",min_time,total_time/(double)total,max_time);
      exit(0);
