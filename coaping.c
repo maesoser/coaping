@@ -5,6 +5,9 @@ int main(int argc, char* argv[])
     srand(time(NULL));
     signal(SIGINT, show_resume);
     int opt;
+    
+    if(argc==1) print_help();
+    
     while ((opt = getopt(argc, argv, "p:n:?")) != -1) {
 	switch(opt) {
 	    case 'p':
@@ -49,17 +52,18 @@ void show_resume(){
      */
      printf("\n--- %s ping statistics ---\n",inet_ntoa(server_ip));
      unsigned int total = nfail+nsuccess;
-     printf("%d packets transmitted, %d received, %d errors, %d%% packet loss\n",total,nsuccess,nfail,(nfail/total)*100);
+     double percentage = ((double)nfail/(double)total)*100.0;
+     printf("%d packets transmitted, %d received, %d errors, %.2lf%% packet loss\n",total,nsuccess,nfail,percentage);
+     // rtt min/avg/max/mdev = 38.218/38.218/38.218/0.000 ms
+    printf("rtt min/avg/max = %.3lf/%.3lf/%.3lf ms\n",min_time,total_time/(double)total,max_time);
      exit(0);
 }
 void print_help(){
     printf("\n pingcoap [-p port] [-n times] [ADDRESS]\n");
-    printf("\n Opciones:\n");
-    printf("\t -p port: para indicar que el servidor TIME al que nos conectamos escucha en un puerto diferente al 37. El puerto por defecto es el 37.\n");
-    printf("\t -n times: Indica el numero de paquetes a enviar. Cero equivale a infinito.");
-    printf("\t -?: Muestra esta ayuda.\n");
-
-    printf("\n Si no se especifica la opción m, el programa arranca en modo consulta UDP, es decir: -m cu.\n Si alguno de los parámetros opcionales no se proporciona, se tomarán los valores por defecto.\n\n");
+    printf("\n Options:\n");
+    printf("\t -p port: Targeted port. Default is DEFAULT_CLIENT_PORT\n");
+    printf("\t -n times: Number of pings you want to send. It's infinite by default.");
+    printf("\t -?: Showes this help message.\n");
     exit(1);
 }
 
@@ -75,7 +79,7 @@ void resolve(){
     }
 }
 
-void ping(uint16_t id){
+int ping(uint16_t id){
     int sockfd;
     uint32_t recvt;
     int recv_bytes;
@@ -103,24 +107,29 @@ void ping(uint16_t id){
     }    
     int result = connect(sockfd, (struct sockaddr *)&client_socket, sizeof(struct sockaddr));
     if(result < 0) {
-	    perror("Error al abrir conexión");
-	    exit(-1);
+	    perror("Error");
+	    nfail++;
+	    sleep(SLEEP_SEC);
+	    close(sockfd);
+	    return 0;
     }
 
-    //Enviamos datagrama vacío
+    // Create and fill datagram
     coap_dtg_t datagram;
     bzero(&datagram,sizeof(datagram));
     datagram.vtl = 0b01000000;
     datagram.id = htons(id);
-    // Calculate time taken by a request
-    clock_gettime(CLOCK_REALTIME, &requestStart);
+    
+    clock_gettime(CLOCK_REALTIME, &requestStart);	    // Calculate time taken by a request
+
     send(sockfd, &datagram,sizeof(datagram), 0);
     recv_bytes = recvfrom(sockfd, &recvt, BUFF_LEN, 0, (struct sockaddr *) &raddr, &fromlen); 			//size_t send(int sockfd, const void *buf, size_t len, int flags);
-    //recv_bytes = recv(sockfd, &recvt, BUFF_LEN, 0);
     clock_gettime(CLOCK_REALTIME, &requestEnd);
 
     double accum = ( requestEnd.tv_sec - requestStart.tv_sec ) + ( requestEnd.tv_nsec - requestStart.tv_nsec )/ BILLION;
-    total_time = total_time +accum;
+    total_time = total_time + accum;
+    if(accum<min_time || min_time==-1) min_time=accum;
+    if(accum>max_time) max_time=accum;
     if(recv_bytes==4){
 	nsuccess++;	
 	coap_dtg_t *recv_dtg = (coap_dtg_t *) &recvt;	
@@ -131,12 +140,18 @@ void ping(uint16_t id){
 	printf("%d bytes from %s (%s): type=%s time=%.2lf ms %s\n",recv_bytes,host,inet_ntoa(raddr.sin_addr),response_type,accum,id_mismatch); 
 	
     }
-    else{
+    else if(recv_bytes<0){
 	nfail++;
-	printf("From %s: %s\n",inet_ntoa(server_ip),strerror(errno));	
+	printf("Error: %s\n",strerror(errno));
+    }
+    else{
+	nfail++;	
+	getnameinfo((struct sockaddr *)&raddr, sizeof(raddr), host, sizeof(host), NULL, 0, 0);	
+	printf("%d bytes from %s (%s): [¿COAP?] time=%.2lf ms\n",recv_bytes,host,inet_ntoa(raddr.sin_addr),accum);	
     }
     sleep(SLEEP_SEC);
     close(sockfd);
+    return 0;
 }
 
 

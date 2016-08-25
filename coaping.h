@@ -21,9 +21,8 @@
 #define BILLION 1E6
 
 
-
 typedef struct {
-    uint8_t vtl;
+    uint8_t vtl;           /* Version (2 bits), type (2 bits), length (2 bits)*/
     uint8_t msg;         /* request method (value 1--10) or response code (value 40-255) */
     uint16_t id;           /* message id */
 } coap_dtg_t;
@@ -36,12 +35,13 @@ struct hostent *server_address;
 struct in_addr server_ip;
 
 double total_time = 0;
+double min_time = -1;
+double max_time = 0;
+
 unsigned int nsuccess = 0;
 unsigned int nfail = 0;
 
-
-
 void print_help();
-void ping(uint16_t id);
+int ping(uint16_t id);
 void resolve();
 void show_resume();
