@@ -68,11 +68,11 @@ void show_resume(){
      exit(0);
 }
 void print_help(){
-    printf("\n pingcoap [-p port] [-n times] [ADDRESS]\n");
-    printf("\n Options:\n");
-    printf("\t -p port: Targeted port. Default is DEFAULT_CLIENT_PORT\n");
-    printf("\t -n times: Number of pings you want to send. It's infinite by default.");
-    printf("\t -?: Showes this help message.\n");
+    printf("pingcoap [-?] [-p port] [-n count] destination\n");
+    printf("Options:\n");
+    printf("   -p port: Targeted port. Default is %d\n",DEFAULT_CLIENT_PORT);
+    printf("   -n times: Number of pings you want to send. It's infinite by default.\n");
+    printf("   -?: Showes this help message.\n");
     exit(1);
 }
 

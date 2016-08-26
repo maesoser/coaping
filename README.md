@@ -8,11 +8,11 @@ First of all, I want to say that there is a code with the same name written for 
 
 ### Examples
 
-- Send three CoAP empty `CON` datagrams to [vs0.inf.ethz.ch](vs0.inf.ethz.ch), port 12345:
+- Send three CoAP empty `CON` datagrams to [vs0.inf.ethz.ch](http://vs0.inf.ethz.ch), port 12345:
 ```
 coaping -n 3 -p 12345 vs0.inf.ethz.ch
 ```
-- Send infinite CoAP empty `CON` datagrams to [vs0.inf.ethz.ch](vs0.inf.ethz.ch), default coAP port:
+- Send infinite CoAP empty `CON` datagrams to [vs0.inf.ethz.ch](http://vs0.inf.ethz.ch), default coAP port:
 ```
 coaping vs0.inf.ethz.ch
 
