@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
 	    case '?':
 		print_help();
 	}
+
 	    
     }
     address = argv[argc-1];
@@ -50,6 +51,7 @@ int main(int argc, char* argv[])
     }
 
     show_resume();
+    return 0;
 }
 void show_resume(){
     /*

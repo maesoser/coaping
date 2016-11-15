@@ -13,7 +13,6 @@
 #include <inttypes.h>
 #include <errno.h>
 
-
 #define DEFAULT_CLIENT_PORT 5683
 #define BUFF_LEN 4
 #define TIMEOUT_MICROS 100000 // 100 ms 
