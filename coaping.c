@@ -63,7 +63,7 @@ void show_resume(){
      double percentage = ((double)nfail/(double)total)*100.0;
      
      //printf("%d packets transmitted, %d received, %d errors, %.2lf%% packet loss\n",total,nsuccess,nfail,percentage);
-     printf("%d packets transmitted, %u received, %.2lf%% packet loss\n",total,nsuccess,percentage);
+     printf("%u packets transmitted, %u received, %.2lf%% packet loss\n",total,nsuccess,percentage);
      
      // rtt min/avg/max/mdev = 38.218/38.218/38.218/0.000 ms
     printf("rtt min/avg/max = %.3lf/%.3lf/%.3lf ms\n",min_time,total_time/(double)total,max_time);
