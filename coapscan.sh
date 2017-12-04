@@ -1,3 +1,4 @@
+#!/bin/sh
 while :
 do
 while

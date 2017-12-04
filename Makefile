@@ -1,5 +1,5 @@
 build:
-	gcc -Wall coaping.c -o coaping
+	gcc -Wall -O3 -pedantic coaping.c -o coaping
 run:
 	./coaping	
 clean:
