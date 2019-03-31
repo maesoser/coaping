@@ -1,5 +1,4 @@
 # coaping
-=======
 
 A ping for CoAP, the constrained Application Protocol **written in C**.
 
